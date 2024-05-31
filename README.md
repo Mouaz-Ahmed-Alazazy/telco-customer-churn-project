@@ -1,9 +1,6 @@
+---
 language:
 - en
-license: other
-license_name: Telco Customer Churn License
-license_link: LICENSE
-license_details: This dataset is provided under the Telco Customer Churn License, which allows for free use and distribution for non-commercial purposes. Commercial use requires explicit permission from the creators.
 tags:
 - tabular-classification
 - churn-prediction
@@ -15,8 +12,6 @@ annotations_creators:
 - no-annotation
 language_creators:
 - found
-language_details:
-- en
 pretty_name: Telco Customer Churn
 size_categories:
 - 10K<n<100K
