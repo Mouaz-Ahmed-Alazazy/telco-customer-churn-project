@@ -1,222 +1,143 @@
 ---
-language:
-- en
-tags:
-- tabular-classification
-- churn-prediction
-- telecom
-- customer-retention
-- demographics
-- customer-service
-pretty_name: Telco Customer Churn
-dataset_info:
-  - config_name: default
-    features:
-      - name: Customer ID
-        dtype: string
-      - name: Gender
-        dtype: ClassLabel 
-      - name: Age
-        dtype: int64 
-      - name: Under 30
-        dtype: bool
-      - name: Senior Citizen  
-        dtype: bool
-      - name: Married
-        dtype: bool
-      - name: Dependents
-        dtype: bool
-      - name: Number of Dependents
-        dtype: int64
-      - name: Country
-        dtype: ClassLabel 
-      - name: State  
-        dtype: ClassLabel 
-      - name: City
-        dtype: ClassLabel 
-      - name: Zip Code
-        dtype: ClassLabel 
-      - name: Lat Long
-        dtype: string
-      - name: Latitude
-        dtype: float64
-      - name: Longitude
-        dtype: float64
-      - name: Population
-        dtype: int64
-      - name: Quarter
-        dtype: ClassLabel 
-      - name: Referred a Friend
-        dtype: bool
-      - name: Number of Referrals
-        dtype: int64
-      - name: Tenure in Months
-        dtype: int64
-      - name: Offer
-        dtype: ClassLabel 
-      - name: Phone Service
-        dtype: bool
-      - name: Avg Monthly Long Distance Charges
-        dtype: float64
-      - name: Multiple Lines
-        dtype: ClassLabel 
-      - name: Internet Service
-        dtype: bool
-      - name: Internet Type
-        dtype: ClassLabel 
-      - name: Avg Monthly GB Download  
-        dtype: float64
-      - name: Online Security
-        dtype: bool
-      - name: Online Backup
-        dtype: bool
-      - name: Device Protection Plan
-        dtype: bool
-      - name: Premium Tech Support
-        dtype: bool
-      - name: Streaming TV
-        dtype: bool
-      - name: Streaming Movies 
-        dtype: bool
-      - name: Streaming Music
-        dtype: bool
-      - name: Unlimited Data
-        dtype: bool
-      - name: Contract
-        dtype: ClassLabel 
-      - name: Paperless Billing
-        dtype: bool
-      - name: Payment Method
-        dtype: ClassLabel 
-      - name: Monthly Charge
-        dtype: float64
-      - name: Total Charges
-        dtype: float64
-      - name: Total Refunds
-        dtype: float64
-      - name: Total Extra Data Charges
-        dtype: float64
-      - name: Total Long Distance Charges
-        dtype: float64
-      - name: Total Revenue
-        dtype: float64
-      - name: Satisfaction Score
-        dtype: int64  
-      - name: Customer Status
-        dtype: ClassLabel 
-      - name: Churn Label
-        dtype: ClassLabel 
-      - name: Churn Value
-        dtype: int64
-      - name: Churn Score
-        dtype: int64
-      - name: CLTV
-        dtype: float64
-      - name: Churn Category 
-        dtype: ClassLabel 
-      - name: Churn Reason
-        dtype: ClassLabel 
-      - name: Partner
-        dtype: bool
-configs:
-- config_name: default
-  data_files:
-  - split: train
-    path: train.csv
-  - split: test
-    path: test.csv
-train-eval-index:
-- config: default
-  task: text-classification
-  task_id: multi_label_classification 
-  col_mapping:
-    Customer ID: id
-    Gender: Gender
-    Age: Age
-    Under 30: Under 30
-    Senior Citizen: Senior Citizen
-    Married: Married
-    Dependents: Dependents
-    Number of Dependents: Number of Dependents
-    Country: Country
-    State: State
-    City: City
-    Zip Code: Zip Code
-    Lat Long: Lat Long
-    Latitude: Latitude
-    Longitude: Longitude
-    Population: Population
-    Quarter: Quarter
-    Referred a Friend: Referred a Friend
-    Number of Referrals: Number of Referrals
-    Tenure in Months: Tenure in Months
-    Offer: Offer
-    Phone Service: Phone Service
-    Avg Monthly Long Distance Charges: Avg Monthly Long Distance Charges
-    Multiple Lines: Multiple Lines
-    Internet Service: Internet Service
-    Internet Type: Internet Type
-    Avg Monthly GB Download: Avg Monthly GB Download
-    Online Security: Online Security
-    Online Backup: Online Backup
-    Device Protection Plan: Device Protection Plan
-    Premium Tech Support: Premium Tech Support
-    Streaming TV: Streaming TV
-    Streaming Movies: Streaming Movies
-    Streaming Music: Streaming Music
-    Unlimited Data: Unlimited Data
-    Contract: Contract
-    Paperless Billing: Paperless Billing
-    Payment Method: Payment Method
-    Monthly Charge: Monthly Charge
-    Total Charges: Total Charges
-    Total Refunds: Total Refunds
-    Total Extra Data Charges: Total Extra Data Charges
-    Total Long Distance Charges: Total Long Distance Charges
-    Total Revenue: Total Revenue
-    Satisfaction Score: Satisfaction Score
-    Customer Status: Customer Status
-    Churn Label: label
-    Churn Value: Churn Value
-    Churn Score: Churn Score
-    CLTV: CLTV
-    Churn Category: Churn Category
-    Churn Reason: Churn Reason
-    Partner: Partner
-  metrics:
-  - type: accuracy
-    name: Accuracy
-  - type: precision
-    name: Precision
-  - type: recall
-    name: Recall
-  - type: f1
-    name: F1 Score
+# For reference on dataset card metadata, see the spec: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1
+# Doc / guide: https://huggingface.co/docs/hub/datasets-cards
+{}
 ---
-## Telco Customer Churn
 
-**This dataset is a valuable resource for exploring and predicting customer churn in the telecommunications industry. It provides a comprehensive snapshot of customer demographics, service usage patterns, billing information, and churn status, making it ideal for training machine learning models to predict customer churn and develop effective customer retention strategies.**
+# Dataset Card for Dataset Name
 
-**Content and Structure:**
+<!-- Provide a quick summary of the dataset. -->
 
-The dataset is structured in a tabular format, with each row representing a unique customer and each column containing attributes about that customer.  
+This dataset card aims to be a base template for new datasets. It has been generated using [this raw template](https://github.com/huggingface/huggingface_hub/blob/main/src/huggingface_hub/templates/datasetcard_template.md?plain=1).
 
-* **Customer Demographics:**  Features like gender, age, marital status, and dependents provide insights into customer profiles.
-* **Service Usage:**  Details customer subscriptions to services such as phone, internet, multiple lines, online security, online backup, device protection, tech support, and streaming options.
-* **Billing Information:**  Provides data on tenure, contract type, payment method, monthly charges, and total charges.
-* **Churn Information:**  Includes labels indicating whether a customer churned, the reason for churn (if applicable), and churn scores for analysis.
+## Dataset Details
 
-**Data Collection and Curation:**
+### Dataset Description
 
-This dataset is a fictional dataset created by IBM data scientists as a sample dataset for exploring customer churn prediction. It is not based on real-world data and should be treated as a simulation for learning and experimentation.
+<!-- Provide a longer summary of what this dataset is. -->
 
-**Usage Examples:**
 
-* **Customer Churn Prediction:** Train classification models to predict churn based on customer demographics, service usage, and billing information.
-* **Customer Segmentation:** Analyze the dataset to identify customer segments with different churn probabilities, allowing for targeted retention strategies.
-* **Feature Engineering:** Experiment with feature engineering techniques to improve churn prediction model accuracy.
 
-**Additional Information:**
+- **Curated by:** [More Information Needed]
+- **Funded by [optional]:** [More Information Needed]
+- **Shared by [optional]:** [More Information Needed]
+- **Language(s) (NLP):** [More Information Needed]
+- **License:** [More Information Needed]
 
-* **Industry Relevance:**  Relevant for businesses in the telecommunications industry and other sectors that deal with customer churn. 
-* **Ethical Considerations:**  This is a fictional dataset and does not contain real personal or sensitive information.  
+### Dataset Sources [optional]
+
+<!-- Provide the basic links for the dataset. -->
+
+- **Repository:** [More Information Needed]
+- **Paper [optional]:** [More Information Needed]
+- **Demo [optional]:** [More Information Needed]
+
+## Uses
+
+<!-- Address questions around how the dataset is intended to be used. -->
+
+### Direct Use
+
+<!-- This section describes suitable use cases for the dataset. -->
+
+[More Information Needed]
+
+### Out-of-Scope Use
+
+<!-- This section addresses misuse, malicious use, and uses that the dataset will not work well for. -->
+
+[More Information Needed]
+
+## Dataset Structure
+
+<!-- This section provides a description of the dataset fields, and additional information about the dataset structure such as criteria used to create the splits, relationships between data points, etc. -->
+
+[More Information Needed]
+
+## Dataset Creation
+
+### Curation Rationale
+
+<!-- Motivation for the creation of this dataset. -->
+
+[More Information Needed]
+
+### Source Data
+
+<!-- This section describes the source data (e.g. news text and headlines, social media posts, translated sentences, ...). -->
+
+#### Data Collection and Processing
+
+<!-- This section describes the data collection and processing process such as data selection criteria, filtering and normalization methods, tools and libraries used, etc. -->
+
+[More Information Needed]
+
+#### Who are the source data producers?
+
+<!-- This section describes the people or systems who originally created the data. It should also include self-reported demographic or identity information for the source data creators if this information is available. -->
+
+[More Information Needed]
+
+### Annotations [optional]
+
+<!-- If the dataset contains annotations which are not part of the initial data collection, use this section to describe them. -->
+
+#### Annotation process
+
+<!-- This section describes the annotation process such as annotation tools used in the process, the amount of data annotated, annotation guidelines provided to the annotators, interannotator statistics, annotation validation, etc. -->
+
+[More Information Needed]
+
+#### Who are the annotators?
+
+<!-- This section describes the people or systems who created the annotations. -->
+
+[More Information Needed]
+
+#### Personal and Sensitive Information
+
+<!-- State whether the dataset contains data that might be considered personal, sensitive, or private (e.g., data that reveals addresses, uniquely identifiable names or aliases, racial or ethnic origins, sexual orientations, religious beliefs, political opinions, financial or health data, etc.). If efforts were made to anonymize the data, describe the anonymization process. -->
+
+[More Information Needed]
+
+## Bias, Risks, and Limitations
+
+<!-- This section is meant to convey both technical and sociotechnical limitations. -->
+
+[More Information Needed]
+
+### Recommendations
+
+<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
+
+Users should be made aware of the risks, biases and limitations of the dataset. More information needed for further recommendations.
+
+## Citation [optional]
+
+<!-- If there is a paper or blog post introducing the dataset, the APA and Bibtex information for that should go in this section. -->
+
+**BibTeX:**
+
+[More Information Needed]
+
+**APA:**
+
+[More Information Needed]
+
+## Glossary [optional]
+
+<!-- If relevant, include terms and calculations in this section that can help readers understand the dataset or dataset card. -->
+
+[More Information Needed]
+
+## More Information [optional]
+
+[More Information Needed]
+
+## Dataset Card Authors [optional]
+
+[More Information Needed]
+
+## Dataset Card Contact
+
+[More Information Needed]
