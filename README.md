@@ -10,113 +10,188 @@ tags:
 - customer-service
 pretty_name: Telco Customer Churn
 dataset_info:
-  features:
-    - name: Customer ID
-      dtype: string
-    - name: Gender
-      dtype: categorical
-    - name: Age
-      dtype: int64 
-    - name: Under 30
-      dtype: bool
-    - name: Senior Citizen  
-      dtype: bool
-    - name: Married
-      dtype: bool
-    - name: Dependents
-      dtype: bool
-    - name: Number of Dependents
-      dtype: int64
-    - name: Country
-      dtype: categorical
-    - name: State  
-      dtype: categorical
-    - name: City
-      dtype: categorical
-    - name: Zip Code
-      dtype: categorical
-    - name: Lat Long
-      dtype: string
-    - name: Latitude
-      dtype: float64
-    - name: Longitude
-      dtype: float64
-    - name: Population
-      dtype: int64
-    - name: Quarter
-      dtype: categorical 
-    - name: Referred a Friend
-      dtype: bool
-    - name: Number of Referrals
-      dtype: int64
-    - name: Tenure in Months
-      dtype: int64
-    - name: Offer
-      dtype: categorical
-    - name: Phone Service
-      dtype: bool
-    - name: Avg Monthly Long Distance Charges
-      dtype: float64
-    - name: Multiple Lines
-      dtype: categorical
-    - name: Internet Service
-      dtype: bool
-    - name: Internet Type
-      dtype: categorical
-    - name: Avg Monthly GB Download  
-      dtype: float64
-    - name: Online Security
-      dtype: bool
-    - name: Online Backup
-      dtype: bool
-    - name: Device Protection Plan
-      dtype: bool
-    - name: Premium Tech Support
-      dtype: bool
-    - name: Streaming TV
-      dtype: bool
-    - name: Streaming Movies 
-      dtype: bool
-    - name: Streaming Music
-      dtype: bool
-    - name: Unlimited Data
-      dtype: bool
-    - name: Contract
-      dtype: categorical
-    - name: Paperless Billing
-      dtype: bool
-    - name: Payment Method
-      dtype: categorical
-    - name: Monthly Charge
-      dtype: float64
-    - name: Total Charges
-      dtype: float64
-    - name: Total Refunds
-      dtype: float64
-    - name: Total Extra Data Charges
-      dtype: float64
-    - name: Total Long Distance Charges
-      dtype: float64
-    - name: Total Revenue
-      dtype: float64
-    - name: Satisfaction Score
-      dtype: int64  
-    - name: Customer Status
-      dtype: categorical
-    - name: Churn Label
-      dtype: categorical 
-    - name: Churn Value
-      dtype: int64
-    - name: Churn Score
-      dtype: int64
-    - name: CLTV
-      dtype: float64
-    - name: Churn Category 
-      dtype: categorical
-    - name: Churn Reason
-      dtype: categorical
-    - name: Partner
-      dtype: bool
+  - config_name: default
+    features:
+      - name: Customer ID
+        dtype: string
+      - name: Gender
+        dtype: ClassLabel 
+      - name: Age
+        dtype: int64 
+      - name: Under 30
+        dtype: bool
+      - name: Senior Citizen  
+        dtype: bool
+      - name: Married
+        dtype: bool
+      - name: Dependents
+        dtype: bool
+      - name: Number of Dependents
+        dtype: int64
+      - name: Country
+        dtype: ClassLabel 
+      - name: State  
+        dtype: ClassLabel 
+      - name: City
+        dtype: ClassLabel 
+      - name: Zip Code
+        dtype: ClassLabel 
+      - name: Lat Long
+        dtype: string
+      - name: Latitude
+        dtype: float64
+      - name: Longitude
+        dtype: float64
+      - name: Population
+        dtype: int64
+      - name: Quarter
+        dtype: ClassLabel 
+      - name: Referred a Friend
+        dtype: bool
+      - name: Number of Referrals
+        dtype: int64
+      - name: Tenure in Months
+        dtype: int64
+      - name: Offer
+        dtype: ClassLabel 
+      - name: Phone Service
+        dtype: bool
+      - name: Avg Monthly Long Distance Charges
+        dtype: float64
+      - name: Multiple Lines
+        dtype: ClassLabel 
+      - name: Internet Service
+        dtype: bool
+      - name: Internet Type
+        dtype: ClassLabel 
+      - name: Avg Monthly GB Download  
+        dtype: float64
+      - name: Online Security
+        dtype: bool
+      - name: Online Backup
+        dtype: bool
+      - name: Device Protection Plan
+        dtype: bool
+      - name: Premium Tech Support
+        dtype: bool
+      - name: Streaming TV
+        dtype: bool
+      - name: Streaming Movies 
+        dtype: bool
+      - name: Streaming Music
+        dtype: bool
+      - name: Unlimited Data
+        dtype: bool
+      - name: Contract
+        dtype: ClassLabel 
+      - name: Paperless Billing
+        dtype: bool
+      - name: Payment Method
+        dtype: ClassLabel 
+      - name: Monthly Charge
+        dtype: float64
+      - name: Total Charges
+        dtype: float64
+      - name: Total Refunds
+        dtype: float64
+      - name: Total Extra Data Charges
+        dtype: float64
+      - name: Total Long Distance Charges
+        dtype: float64
+      - name: Total Revenue
+        dtype: float64
+      - name: Satisfaction Score
+        dtype: int64  
+      - name: Customer Status
+        dtype: ClassLabel 
+      - name: Churn Label
+        dtype: ClassLabel 
+      - name: Churn Value
+        dtype: int64
+      - name: Churn Score
+        dtype: int64
+      - name: CLTV
+        dtype: float64
+      - name: Churn Category 
+        dtype: ClassLabel 
+      - name: Churn Reason
+        dtype: ClassLabel 
+      - name: Partner
+        dtype: bool
+configs:
+- config_name: default
+  data_files:
+  - split: train
+    path: train.csv
+  - split: test
+    path: test.csv
+train-eval-index:
+- config: default
+  task: text-classification
+  task_id: multi_label_classification 
+  col_mapping:
+    Customer ID: id
+    Gender: Gender
+    Age: Age
+    Under 30: Under 30
+    Senior Citizen: Senior Citizen
+    Married: Married
+    Dependents: Dependents
+    Number of Dependents: Number of Dependents
+    Country: Country
+    State: State
+    City: City
+    Zip Code: Zip Code
+    Lat Long: Lat Long
+    Latitude: Latitude
+    Longitude: Longitude
+    Population: Population
+    Quarter: Quarter
+    Referred a Friend: Referred a Friend
+    Number of Referrals: Number of Referrals
+    Tenure in Months: Tenure in Months
+    Offer: Offer
+    Phone Service: Phone Service
+    Avg Monthly Long Distance Charges: Avg Monthly Long Distance Charges
+    Multiple Lines: Multiple Lines
+    Internet Service: Internet Service
+    Internet Type: Internet Type
+    Avg Monthly GB Download: Avg Monthly GB Download
+    Online Security: Online Security
+    Online Backup: Online Backup
+    Device Protection Plan: Device Protection Plan
+    Premium Tech Support: Premium Tech Support
+    Streaming TV: Streaming TV
+    Streaming Movies: Streaming Movies
+    Streaming Music: Streaming Music
+    Unlimited Data: Unlimited Data
+    Contract: Contract
+    Paperless Billing: Paperless Billing
+    Payment Method: Payment Method
+    Monthly Charge: Monthly Charge
+    Total Charges: Total Charges
+    Total Refunds: Total Refunds
+    Total Extra Data Charges: Total Extra Data Charges
+    Total Long Distance Charges: Total Long Distance Charges
+    Total Revenue: Total Revenue
+    Satisfaction Score: Satisfaction Score
+    Customer Status: Customer Status
+    Churn Label: label
+    Churn Value: Churn Value
+    Churn Score: Churn Score
+    CLTV: CLTV
+    Churn Category: Churn Category
+    Churn Reason: Churn Reason
+    Partner: Partner
+  metrics:
+  - type: accuracy
+    name: Accuracy
+  - type: precision
+    name: Precision
+  - type: recall
+    name: Recall
+  - type: f1
+    name: F1 Score
 ---
 ## Telco Customer Churn
 
