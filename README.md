@@ -8,25 +8,7 @@ tags:
 - customer-retention
 - demographics
 - customer-service
-annotations_creators:
-- no-annotation
-language_creators:
-- found
 pretty_name: Telco Customer Churn
-size_categories:
-- 10K<n<100K
-source_datasets:
-- original
-task_categories:
-- tabular-classification
-task_ids:
-- multi-class-classification
-paperswithcode_id: null
-configs:
-- config_name: default
-  data_files:
-  - split: train
-    path: dataset.csv
 dataset_info:
   features:
     - name: Customer ID
