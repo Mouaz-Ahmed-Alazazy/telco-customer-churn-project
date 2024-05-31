@@ -26,7 +26,7 @@ configs:
 - config_name: default
   data_files:
   - split: train
-    path: telco_customer_churn.csv
+    path: dataset.csv
 dataset_info:
   features:
     - name: Customer ID
@@ -135,26 +135,6 @@ dataset_info:
       dtype: string
     - name: Partner
       dtype: bool
-  config_name: default
-  splits:
-    - name: train
-      num_bytes: 121430 # Replace with actual value
-      num_examples: 7043
-  download_size: 121430 # Replace with actual value
-  dataset_size: 121430 # Replace with actual value
-train-eval-index:
-  - config: default
-    task: tabular-classification
-    task_id: multi_class_classification
-    splits:
-      train_split: train
-      eval_split: validation # Update if you have a validation split
-    col_mapping:
-      label: Churn Label
-    metrics:
-      - type: accuracy
-        name: Accuracy
-
 ---
 ## Telco Customer Churn
 
