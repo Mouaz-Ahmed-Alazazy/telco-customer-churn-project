@@ -219,4 +219,4 @@ This dataset is a fictional dataset created by IBM data scientists as a sample d
 **Additional Information:**
 
 * **Industry Relevance:**  Relevant for businesses in the telecommunications industry and other sectors that deal with customer churn. 
-* **Ethical Considerations:**  This is a fictional dataset and does not contain real personal or sensitive information. 
+* **Ethical Considerations:**  This is a fictional dataset and does not contain real personal or sensitive information.  
