@@ -14,57 +14,57 @@ dataset_info:
     - name: Customer ID
       dtype: string
     - name: Gender
-      dtype: string
+      dtype: categorical
     - name: Age
-      dtype: int32
+      dtype: int64 
     - name: Under 30
       dtype: bool
-    - name: Senior Citizen
+    - name: Senior Citizen  
       dtype: bool
     - name: Married
       dtype: bool
     - name: Dependents
       dtype: bool
     - name: Number of Dependents
-      dtype: int32
+      dtype: int64
     - name: Country
-      dtype: string
-    - name: State
-      dtype: string
+      dtype: categorical
+    - name: State  
+      dtype: categorical
     - name: City
-      dtype: string
+      dtype: categorical
     - name: Zip Code
-      dtype: int32
+      dtype: categorical
     - name: Lat Long
       dtype: string
     - name: Latitude
-      dtype: float32
+      dtype: float64
     - name: Longitude
-      dtype: float32
+      dtype: float64
     - name: Population
-      dtype: int32
+      dtype: int64
     - name: Quarter
-      dtype: string
+      dtype: categorical 
     - name: Referred a Friend
       dtype: bool
     - name: Number of Referrals
-      dtype: int32
+      dtype: int64
     - name: Tenure in Months
-      dtype: int32
+      dtype: int64
     - name: Offer
-      dtype: string
+      dtype: categorical
     - name: Phone Service
       dtype: bool
     - name: Avg Monthly Long Distance Charges
-      dtype: float32
+      dtype: float64
     - name: Multiple Lines
-      dtype: bool
+      dtype: categorical
     - name: Internet Service
       dtype: bool
     - name: Internet Type
-      dtype: string
-    - name: Avg Monthly GB Download
-      dtype: float32
+      dtype: categorical
+    - name: Avg Monthly GB Download  
+      dtype: float64
     - name: Online Security
       dtype: bool
     - name: Online Backup
@@ -75,46 +75,46 @@ dataset_info:
       dtype: bool
     - name: Streaming TV
       dtype: bool
-    - name: Streaming Movies
+    - name: Streaming Movies 
       dtype: bool
     - name: Streaming Music
       dtype: bool
     - name: Unlimited Data
       dtype: bool
     - name: Contract
-      dtype: string
+      dtype: categorical
     - name: Paperless Billing
       dtype: bool
     - name: Payment Method
-      dtype: string
+      dtype: categorical
     - name: Monthly Charge
-      dtype: float32
+      dtype: float64
     - name: Total Charges
-      dtype: float32
+      dtype: float64
     - name: Total Refunds
-      dtype: float32
+      dtype: float64
     - name: Total Extra Data Charges
-      dtype: float32
+      dtype: float64
     - name: Total Long Distance Charges
-      dtype: float32
+      dtype: float64
     - name: Total Revenue
-      dtype: float32
+      dtype: float64
     - name: Satisfaction Score
-      dtype: int32
+      dtype: int64  
     - name: Customer Status
-      dtype: string
+      dtype: categorical
     - name: Churn Label
-      dtype: string
+      dtype: categorical 
     - name: Churn Value
-      dtype: bool
+      dtype: int64
     - name: Churn Score
-      dtype: int32
+      dtype: int64
     - name: CLTV
-      dtype: float32
-    - name: Churn Category
-      dtype: string
+      dtype: float64
+    - name: Churn Category 
+      dtype: categorical
     - name: Churn Reason
-      dtype: string
+      dtype: categorical
     - name: Partner
       dtype: bool
 ---
