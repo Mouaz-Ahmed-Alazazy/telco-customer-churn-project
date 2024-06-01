@@ -1,136 +1,235 @@
 ---
+language:
+- en
+pretty_name: Telco Customer Churn
+size_categories:
+- 1K<n<10K
 dataset_info:
-  - config_name: default
-    features:
-      - name: Age
-        dtype: int64
-      - name: Avg Monthly GB Download
-        dtype: int64
-      - name: Avg Monthly Long Distance Charges
-        dtype: float64
-      - name: Churn
-        dtype: int64
-      - name: Churn Category
-        dtype: string
-      - name: Churn Reason
-        dtype: string
-      - name: Churn Score
-        dtype: int64
-      - name: City
-        dtype: string
-      - name: CLTV
-        dtype: int64
-      - name: Contract
-        dtype: string
-      - name: Country
-        dtype: string
-      - name: Customer ID
-        dtype: string
-      - name: Customer Status
-        dtype: string
-      - name: Dependents
-        dtype: int64
-      - name: Device Protection Plan
-        dtype: int64
-      - name: Gender
-        dtype: string
-      - name: Internet Service
-        dtype: int64
-      - name: Internet Type
-        dtype: string
-      - name: Lat Long
-        dtype: string
-      - name: Latitude
-        dtype: float64
-      - name: Longitude
-        dtype: float64
-      - name: Married
-        dtype: int64
-      - name: Monthly Charge
-        dtype: float64
-      - name: Multiple Lines
-        dtype: int64
-      - name: Number of Dependents
-        dtype: int64
-      - name: Number of Referrals
-        dtype: int64
-      - name: Offer
-        dtype: string
-      - name: Online Backup
-        dtype: int64
-      - name: Online Security
-        dtype: int64
-      - name: Paperless Billing
-        dtype: int64
-      - name: Partner
-        dtype: int64
-      - name: Payment Method
-        dtype: string
-      - name: Phone Service
-        dtype: int64
-      - name: Population
-        dtype: int64
-      - name: Premium Tech Support
-        dtype: int64
-      - name: Quarter
-        dtype: string
-      - name: Referred a Friend
-        dtype: int64
-      - name: Satisfaction Score
-        dtype: int64
-      - name: Senior Citizen
-        dtype: int64
-      - name: State
-        dtype: string
-      - name: Streaming Movies
-        dtype: int64
-      - name: Streaming Music
-        dtype: int64
-      - name: Streaming TV
-        dtype: int64
-      - name: Tenure in Months
-        dtype: int64
-      - name: Total Charges
-        dtype: float64
-      - name: Total Extra Data Charges
-        dtype: int64
-      - name: Total Long Distance Charges
-        dtype: float64
-      - name: Total Refunds
-        dtype: float64
-      - name: Total Revenue
-        dtype: float64
-      - name: Under 30
-        dtype: int64
-      - name: Unlimited Data
-        dtype: int64
-      - name: Zip Code
-        dtype: string
+- config_name: default
+  features:
+  - name: Age
+    dtype: int64
+  - name: Avg Monthly GB Download
+    dtype: int64
+  - name: Avg Monthly Long Distance Charges
+    dtype: float64
+  - name: Churn
+    dtype: int64
+  - name: Churn Category
+    dtype: string
+  - name: Churn Reason
+    dtype: string
+  - name: Churn Score
+    dtype: int64
+  - name: City
+    dtype: string
+  - name: CLTV
+    dtype: int64
+  - name: Contract
+    dtype: string
+  - name: Country
+    dtype: string
+  - name: Customer ID
+    dtype: string
+  - name: Customer Status
+    dtype: string
+  - name: Dependents
+    dtype: int64
+  - name: Device Protection Plan
+    dtype: int64
+  - name: Gender
+    dtype: string
+  - name: Internet Service
+    dtype: int64
+  - name: Internet Type
+    dtype: string
+  - name: Lat Long
+    dtype: string
+  - name: Latitude
+    dtype: float64
+  - name: Longitude
+    dtype: float64
+  - name: Married
+    dtype: int64
+  - name: Monthly Charge
+    dtype: float64
+  - name: Multiple Lines
+    dtype: int64
+  - name: Number of Dependents
+    dtype: int64
+  - name: Number of Referrals
+    dtype: int64
+  - name: Offer
+    dtype: string
+  - name: Online Backup
+    dtype: int64
+  - name: Online Security
+    dtype: int64
+  - name: Paperless Billing
+    dtype: int64
+  - name: Partner
+    dtype: int64
+  - name: Payment Method
+    dtype: string
+  - name: Phone Service
+    dtype: int64
+  - name: Population
+    dtype: int64
+  - name: Premium Tech Support
+    dtype: int64
+  - name: Quarter
+    dtype: string
+  - name: Referred a Friend
+    dtype: int64
+  - name: Satisfaction Score
+    dtype: int64
+  - name: Senior Citizen
+    dtype: int64
+  - name: State
+    dtype: string
+  - name: Streaming Movies
+    dtype: int64
+  - name: Streaming Music
+    dtype: int64
+  - name: Streaming TV
+    dtype: int64
+  - name: Tenure in Months
+    dtype: int64
+  - name: Total Charges
+    dtype: float64
+  - name: Total Extra Data Charges
+    dtype: int64
+  - name: Total Long Distance Charges
+    dtype: float64
+  - name: Total Refunds
+    dtype: float64
+  - name: Total Revenue
+    dtype: float64
+  - name: Under 30
+    dtype: int64
+  - name: Unlimited Data
+    dtype: int64
+  - name: Zip Code
+    dtype: string
 ---
-## Telco Customer Churn
+# Dataset Card for Telco Customer Churn
 
-**This dataset is a valuable resource for exploring and predicting customer churn in the telecommunications industry. It provides a comprehensive snapshot of customer demographics, service usage patterns, billing information, and churn status, making it ideal for training machine learning models to predict customer churn and develop effective customer retention strategies.**
+This dataset contains information about customers of a fictional telecommunications company, including demographic information, services subscribed to, location details, and churn behavior. This merged dataset combines the information from the original Telco Customer Churn dataset with additional details.
 
-**Content and Structure:**
+## Dataset Details
 
-The dataset is structured in a tabular format, with each row representing a unique customer and each column containing attributes about that customer.  
+### Dataset Description
 
-* **Customer Demographics:**  Features like gender, age, marital status, and dependents provide insights into customer profiles.
-* **Service Usage:**  Details customer subscriptions to services such as phone, internet, multiple lines, online security, online backup, device protection, tech support, and streaming options.
-* **Billing Information:**  Provides data on tenure, contract type, payment method, monthly charges, and total charges.
-* **Churn Information:**  Includes labels indicating whether a customer churned, the reason for churn (if applicable), and churn scores for analysis.
+This merged Telco Customer Churn dataset provides a comprehensive view of customer attributes, service usage, location data, and churn behavior. This expanded dataset is a valuable resource for understanding churn patterns, customer segmentation, and developing targeted marketing strategies. 
 
-**Data Collection and Curation:**
+## Uses
 
-This dataset is a fictional dataset created by IBM data scientists as a sample dataset for exploring customer churn prediction. It is not based on real-world data and should be treated as a simulation for learning and experimentation.
+### Direct Use
 
-**Usage Examples:**
+This dataset can be used for various purposes, including:
 
-* **Customer Churn Prediction:** Train classification models to predict churn based on customer demographics, service usage, and billing information.
-* **Customer Segmentation:** Analyze the dataset to identify customer segments with different churn probabilities, allowing for targeted retention strategies.
-* **Feature Engineering:** Experiment with feature engineering techniques to improve churn prediction model accuracy.
+- **Customer churn prediction:** Develop machine learning models to predict which customers are at risk of churning, leveraging the expanded features.
+- **Customer segmentation:**  Identify different customer segments based on demographics, service usage, location, and churn behavior.
+- **Targeted marketing campaigns:**  Develop targeted marketing campaigns to retain at-risk customers or attract new customers, tailoring campaigns based on the insights derived from the merged dataset.
+- **Location-based analysis:** Analyze customer churn trends based on specific locations, cities, or zip codes, and identify potential regional differences.
 
-**Additional Information:**
+### Out-of-Scope Use
 
-* **Industry Relevance:**  Relevant for businesses in the telecommunications industry and other sectors that deal with customer churn. 
-* **Ethical Considerations:**  This is a fictional dataset and does not contain real personal or sensitive information. 
+The dataset is not suitable for:
+
+- **Real-time churn prediction:** The dataset lacks real-time data, making it inappropriate for immediate churn prediction.
+- **Personal identification:** While the dataset contains customer information, it is anonymized and should not be used to identify individuals.
+
+## Dataset Structure
+
+The dataset is structured as a CSV file with 49 columns, each representing a customer attribute. The columns include:
+
+- **Age:** The customer's age in years.
+- **Avg Monthly GB Download:** The customer's average monthly gigabyte download volume.
+- **Avg Monthly Long Distance Charges:** The customer's average monthly long distance charges.
+- **Churn Category:** A high-level category for the customer's reason for churning.
+- **Churn Label:**  Indicates whether the customer churned.
+- **Churn Reason:** The customer's specific reason for leaving the company.
+- **Churn Score:** A score from 0-100 indicating the likelihood of the customer churning.
+- **Churn Value:** A numerical value representing whether the customer churned (1 for churned, 0 for not churned).
+- **City:** The city of the customer's residence.
+- **CLTV:** Customer Lifetime Value.
+- **Contract:** The customer's contract type.
+- **Country:** The country of the customer's residence.
+- **Customer ID:**  A unique identifier for each customer.
+- **Customer Status:** The customer's status at the end of the quarter (Churned, Stayed, or Joined).
+- **Dependents:** Whether the customer has dependents.
+- **Device Protection Plan:** Whether the customer has a device protection plan.
+- **Gender:** The customer's gender.
+- **Internet Service:** Indicates whether the customer subscribes to internet service.
+- **Internet Type:** The type of internet service provider.
+- **Lat Long:** The combined latitude and longitude of the customer's residence.
+- **Latitude:** The latitude of the customer's residence.
+- **Longitude:** The longitude of the customer's residence.
+- **Married:**  Indicates if the customer is married.
+- **Monthly Charge:** The customer's total monthly charge for all their services.
+- **Multiple Lines:** Whether the customer has multiple phone lines.
+- **Number of Dependents:** The number of dependents the customer has.
+- **Number of Referrals:** The number of referrals made by the customer.
+- **Offer:** The last marketing offer the customer accepted.
+- **Online Backup:** Whether the customer has online backup service.
+- **Online Security:** Whether the customer has online security service.
+- **Paperless Billing:** Whether the customer has paperless billing.
+- **Partner:** Whether the customer has a partner.
+- **Payment Method:** The customer's payment method.
+- **Phone Service:** Whether the customer has phone service.
+- **Population:** The estimated population of the customer's zip code.
+- **Premium Tech Support:** Whether the customer has premium tech support.
+- **Quarter:** The fiscal quarter for the data.
+- **Referred a Friend:**  Indicates if the customer has referred a friend.
+- **Satisfaction Score:** The customer's satisfaction rating.
+- **Senior Citizen:**  Whether the customer is a senior citizen.
+- **State:** The state of the customer's residence.
+- **Streaming Movies:** Whether the customer has streaming movies service.
+- **Streaming Music:** Whether the customer has streaming music service.
+- **Streaming TV:** Whether the customer has streaming TV service.
+- **Tenure in Months:** The number of months the customer has been with the company.
+- **Total Charges:** The customer's total charges.
+- **Total Extra Data Charges:**  The total charges for extra data downloads.
+- **Total Long Distance Charges:** The total charges for long distance calls.
+- **Total Refunds:** The total refunds received by the customer.
+- **Total Revenue:** The total revenue generated by the customer.
+- **Under 30:**  Indicates if the customer is under 30 years old.
+- **Unlimited Data:** Whether the customer has unlimited data.
+- **Zip Code:** The zip code of the customer's residence.
+
+## Dataset Creation
+
+### Curation Rationale
+
+This merged dataset was created to provide a more comprehensive and detailed analysis of customer churn behavior. Combining multiple sources of data allows for a richer understanding of factors influencing churn.
+
+### Source Data
+
+#### Data Collection and Processing
+
+The dataset is derived from the original Telco Customer Churn dataset and additional data sources. The specific data collection and processing methods are not disclosed.
+
+## Bias, Risks, and Limitations
+
+### Bias
+
+The dataset may exhibit biases due to the simulated nature of the original Telco Customer Churn data. It is essential to consider that the dataset may not accurately reflect the demographics, service usage, or churn patterns of actual telecommunications companies.
+
+### Risks
+
+Using the dataset for real-world decisions without proper validation and understanding of its limitations can lead to inaccurate predictions and potentially biased outcomes.
+
+### Limitations
+
+- **Simulated Data:** The dataset is based on simulated data and may not fully represent real-world customer behavior.
+- **Limited Context:** The dataset may lack specific contextual information such as customer feedback or reasons for churn.
+- **Potential Bias:**  The simulated data may not fully capture the nuances of customer behavior and churn patterns, especially when combined with additional data sources.
+
+### Recommendations
+
+Users should be aware of the dataset's limitations and potential biases. Consider the following:
+
+- **Validation:** Validate the dataset's results against real-world data before making critical decisions.
+- **Contextualization:**  Include additional contextual information if available to improve model accuracy and insights.
+- **Transparency:** Be transparent about the dataset's limitations and potential biases when communicating results.
