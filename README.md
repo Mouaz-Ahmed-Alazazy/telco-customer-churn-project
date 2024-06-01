@@ -11,7 +11,7 @@ dataset_info:
       - name: Churn Category 
         dtype: string 
       - name: Churn Label
-        dtype: string  # Target Variable
+        dtype: string
       - name: Churn Reason
         dtype: string 
       - name: Churn Score
@@ -31,13 +31,13 @@ dataset_info:
       - name: Customer Status
         dtype: string 
       - name: Dependents
-        dtype: bool
+        dtype: string
       - name: Device Protection Plan
-        dtype: bool
+        dtype: string
       - name: Gender
         dtype: string 
       - name: Internet Service
-        dtype: bool
+        dtype: string
       - name: Internet Type
         dtype: string
       - name: Lat Long
@@ -47,7 +47,7 @@ dataset_info:
       - name: Longitude
         dtype: float64
       - name: Married
-        dtype: bool
+        dtype: string
       - name: Monthly Charge
         dtype: float64
       - name: Multiple Lines 
@@ -59,37 +59,37 @@ dataset_info:
       - name: Offer
         dtype: string 
       - name: Online Backup
-        dtype: bool
+        dtype: string
       - name: Online Security
-        dtype: bool
+        dtype: string
       - name: Paperless Billing
-        dtype: bool
+        dtype: string
       - name: Partner
         dtype: string
       - name: Payment Method
         dtype: string 
       - name: Phone Service
-        dtype: bool
+        dtype: string
       - name: Population
         dtype: int64
       - name: Premium Tech Support
-        dtype: bool
+        dtype: string
       - name: Quarter
         dtype: string 
       - name: Referred a Friend
-        dtype: bool
+        dtype: string
       - name: Satisfaction Score
         dtype: int64  
       - name: Senior Citizen  
-        dtype: bool
+        dtype: string
       - name: State  
         dtype: string 
       - name: Streaming Movies 
-        dtype: bool
+        dtype: string
       - name: Streaming Music
-        dtype: bool
+        dtype: string
       - name: Streaming TV
-        dtype: bool
+        dtype: string
       - name: Tenure in Months
         dtype: int64
       - name: Total Charges
@@ -103,9 +103,9 @@ dataset_info:
       - name: Total Revenue
         dtype: float64
       - name: Under 30
-        dtype: bool
+        dtype: string
       - name: Unlimited Data
-        dtype: bool
+        dtype: string
       - name: Zip Code
         dtype: string
 ---
