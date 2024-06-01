@@ -1,9 +1,18 @@
 ---
 language:
-- en
+  - en
+tags:
+  - tabular-classification
+  - churn-prediction
+  - telecom
+  - customer-retention
+  - demographics
+  - customer-service
 pretty_name: Telco Customer Churn
 size_categories:
-- 1K<n<10K
+  - 10K<n<100K
+task_categories:
+  - tabular-classification
 dataset_info:
 - config_name: default
   features:
