@@ -1,14 +1,4 @@
 ---
-language:
-- en
-tags:
-- churn-prediction
-- customer-retention
-- customer-service
-- demographics
-- telecom
-- tabular-classification
-pretty_name: Telco Customer Churn
 dataset_info:
   - config_name: default
     features:
@@ -46,6 +36,10 @@ dataset_info:
         dtype: bool
       - name: Gender
         dtype: string 
+      - name: Internet Service
+        dtype: bool # Include this column
+      - name: Internet Type
+        dtype: string # Include this column
       - name: Lat Long
         dtype: string
       - name: Latitude
@@ -71,7 +65,7 @@ dataset_info:
       - name: Paperless Billing
         dtype: bool
       - name: Partner
-        dtype: bool
+        dtype: bool # Include this column
       - name: Payment Method
         dtype: string 
       - name: Phone Service
