@@ -37,9 +37,9 @@ dataset_info:
       - name: Gender
         dtype: string 
       - name: Internet Service
-        dtype: bool # Include this column
+        dtype: bool
       - name: Internet Type
-        dtype: string # Include this column
+        dtype: string
       - name: Lat Long
         dtype: string
       - name: Latitude
@@ -65,7 +65,7 @@ dataset_info:
       - name: Paperless Billing
         dtype: bool
       - name: Partner
-        dtype: bool # Include this column
+        dtype: string
       - name: Payment Method
         dtype: string 
       - name: Phone Service
