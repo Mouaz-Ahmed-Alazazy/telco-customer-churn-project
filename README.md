@@ -179,7 +179,7 @@ dataset_info:
       - name: test
         num_bytes: 183950
         num_examples: 1409
-      - name: val
+      - name: validation
         num_bytes: 184050
         num_examples: 1409
 ---
