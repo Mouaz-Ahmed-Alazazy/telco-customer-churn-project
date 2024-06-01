@@ -14,112 +14,174 @@ size_categories:
 task_categories:
   - tabular-classification
 dataset_info:
- - config_name: default
-   features:
-     - name: Age
-       dtype: int64
-     - name: Avg Monthly GB Download
-       dtype: int64
-     - name: Avg Monthly Long Distance Charges
-       dtype: float64
-     - name: Churn
-       dtype: int64
-     - name: Churn Category
-       dtype: string
-     - name: Churn Reason
-       dtype: string
-     - name: Churn Score
-       dtype: int64
-     - name: City
-       dtype: string
-     - name: CLTV
-       dtype: int64
-     - name: Contract
-       dtype: string
-     - name: Country
-       dtype: string
-     - name: Customer ID
-       dtype: string
-     - name: Customer Status
-       dtype: string
-     - name: Dependents
-       dtype: int64
-     - name: Device Protection Plan
-       dtype: int64
-     - name: Gender
-       dtype: string
-     - name: Internet Service
-       dtype: int64
-     - name: Internet Type
-       dtype: string
-     - name: Lat Long
-       dtype: string
-     - name: Latitude
-       dtype: float64
-     - name: Longitude
-       dtype: float64
-     - name: Married
-       dtype: int64
-     - name: Monthly Charge
-       dtype: float64
-     - name: Multiple Lines
-       dtype: int64
-     - name: Number of Dependents
-       dtype: int64
-     - name: Number of Referrals
-       dtype: int64
-     - name: Offer
-       dtype: string
-     - name: Online Backup
-       dtype: int64
-     - name: Online Security
-       dtype: int64
-     - name: Paperless Billing
-       dtype: int64
-     - name: Partner
-       dtype: int64
-     - name: Payment Method
-       dtype: string
-     - name: Phone Service
-       dtype: int64
-     - name: Population
-       dtype: int64
-     - name: Premium Tech Support
-       dtype: int64
-     - name: Quarter
-       dtype: string
-     - name: Referred a Friend
-       dtype: int64
-     - name: Satisfaction Score
-       dtype: int64
-     - name: Senior Citizen
-       dtype: int64
-     - name: State
-       dtype: string
-     - name: Streaming Movies
-       dtype: int64
-     - name: Streaming Music
-       dtype: int64
-     - name: Streaming TV
-       dtype: int64
-     - name: Tenure in Months
-       dtype: int64
-     - name: Total Charges
-       dtype: float64
-     - name: Total Extra Data Charges
-       dtype: int64
-     - name: Total Long Distance Charges
-       dtype: float64
-     - name: Total Refunds
-       dtype: float64
-     - name: Total Revenue
-       dtype: float64
-     - name: Under 30
-       dtype: int64
-     - name: Unlimited Data
-       dtype: int64
-     - name: Zip Code
-       dtype: string
+  - config_name: default
+    features:
+      - name: Age
+        dtype: int64
+        feature_type: Value
+      - name: Avg Monthly GB Download
+        dtype: int64
+        feature_type: Value
+      - name: Avg Monthly Long Distance Charges
+        dtype: float64
+        feature_type: Value
+      - name: Churn
+        dtype: int64
+        feature_type: ClassLabel
+      - name: Churn Category
+        dtype: string
+        feature_type: ClassLabel
+      - name: Churn Reason
+        dtype: string
+        feature_type: ClassLabel
+      - name: Churn Score
+        dtype: int64
+        feature_type: Value
+      - name: City
+        dtype: string
+        feature_type: Value
+      - name: CLTV
+        dtype: int64
+        feature_type: Value
+      - name: Contract
+        dtype: string
+        feature_type: Value
+      - name: Country
+        dtype: string
+        feature_type: Value
+      - name: Customer ID
+        dtype: string
+        feature_type: Value
+      - name: Customer Status
+        dtype: string
+        feature_type: Value
+      - name: Dependents
+        dtype: int64
+        feature_type: Value
+      - name: Device Protection Plan
+        dtype: int64
+        feature_type: Value
+      - name: Gender
+        dtype: string
+        feature_type: Value
+      - name: Internet Service
+        dtype: int64
+        feature_type: Value
+      - name: Internet Type
+        dtype: string
+        feature_type: Value
+      - name: Lat Long
+        dtype: string
+        feature_type: Value
+      - name: Latitude
+        dtype: float64
+        feature_type: Value
+      - name: Longitude
+        dtype: float64
+        feature_type: Value
+      - name: Married
+        dtype: int64
+        feature_type: Value
+      - name: Monthly Charge
+        dtype: float64
+        feature_type: Value
+      - name: Multiple Lines
+        dtype: int64
+        feature_type: Value
+      - name: Number of Dependents
+        dtype: int64
+        feature_type: Value
+      - name: Number of Referrals
+        dtype: int64
+        feature_type: Value
+      - name: Offer
+        dtype: string
+        feature_type: Value
+      - name: Online Backup
+        dtype: int64
+        feature_type: Value
+      - name: Online Security
+        dtype: int64
+        feature_type: Value
+      - name: Paperless Billing
+        dtype: int64
+        feature_type: Value
+      - name: Partner
+        dtype: int64
+        feature_type: Value
+      - name: Payment Method
+        dtype: string
+        feature_type: Value
+      - name: Phone Service
+        dtype: int64
+        feature_type: Value
+      - name: Population
+        dtype: int64
+        feature_type: Value
+      - name: Premium Tech Support
+        dtype: int64
+        feature_type: Value
+      - name: Quarter
+        dtype: string
+        feature_type: Value
+      - name: Referred a Friend
+        dtype: int64
+        feature_type: Value
+      - name: Satisfaction Score
+        dtype: int64
+        feature_type: Value
+      - name: Senior Citizen
+        dtype: int64
+        feature_type: Value
+      - name: State
+        dtype: string
+        feature_type: Value
+      - name: Streaming Movies
+        dtype: int64
+        feature_type: Value
+      - name: Streaming Music
+        dtype: int64
+        feature_type: Value
+      - name: Streaming TV
+        dtype: int64
+        feature_type: Value
+      - name: Tenure in Months
+        dtype: int64
+        feature_type: Value
+      - name: Total Charges
+        dtype: float64
+        feature_type: Value
+      - name: Total Extra Data Charges
+        dtype: int64
+        feature_type: Value
+      - name: Total Long Distance Charges
+        dtype: float64
+        feature_type: Value
+      - name: Total Refunds
+        dtype: float64
+        feature_type: Value
+      - name: Total Revenue
+        dtype: float64
+        feature_type: Value
+      - name: Under 30
+        dtype: int64
+        feature_type: Value
+      - name: Unlimited Data
+        dtype: int64
+        feature_type: Value
+      - name: Zip Code
+        dtype: string
+        feature_type: Value
+    splits:
+      - name: train 
+        num_bytes: 400104
+        num_examples: 4225
+      - name: test
+        num_bytes: 183950
+        num_examples: 1409
+      - name: val
+        num_bytes: 184050
+        num_examples: 1409
 ---
 # Dataset Card for Telco Customer Churn
 
