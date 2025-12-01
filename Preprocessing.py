@@ -1,48 +1,119 @@
-#top highest corelation features with target variable 'Churn'
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
 import seaborn as sns
 import matplotlib.pyplot as plt
-import pandas as pd
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.preprocessing import OrdinalEncoder, StandardScaler, MinMaxScaler, MaxAbsScaler
 from imblearn.over_sampling import SMOTE
-from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+from sklearn.linear_model import LogisticRegression
 
-df = pd.read_csv('train.csv')
-df_test = pd.read_csv('test.csv')
 
-corr_matrix = df.corr(numeric_only=True)
+class PreProcessing:
+    def __init__(self):
+        self.encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+        self.scaler = None
 
-# identifying top features correlated with 'Churn'
-corr_target = corr_matrix['Churn'].abs()
-top_features = corr_target[corr_target >= 0.30].index.tolist()
-df_selected_test = df_test[top_features]
-print("Top features correlated with 'Churn':", top_features)
+    def load_data(self, filepath):
+        """
+        Loads the dataset from a CSV file.
+        """
+        try:
+            df = pd.read_csv(filepath)
+            return df
+        except FileNotFoundError:
+            print(f"Error: File not found at {filepath}")
+            return None
 
-# selecting only the top features from the original dataframe
-df_selected = df[top_features]
-print(df_selected.head())
+    def handle_missing_values(self, df):
+        """
+        Fills missing values with 0.
+        """
+        df_clean = df.copy()
+        df_clean.fillna(0, inplace=True)
+        return df_clean
 
-# check data imblance in target variable
-churn_counts = df['Churn'].value_counts()
-print(churn_counts)
+    def encode_categorical(self, df):
+        """
+        Encodes categorical columns using OrdinalEncoder.
+        """
+        df_encoded = df.copy()
+        categorical_cols = df_encoded.select_dtypes(include=['object']).columns
+        for col in categorical_cols:
+            df_encoded[col] = df_encoded[col].astype(str)
+        df_encoded[categorical_cols] = self.encoder.fit_transform(df_encoded[categorical_cols])
+        return df_encoded
 
-# Data Preprocessing and SMOTE
-scaler = StandardScaler()
-x = df_selected.drop('Churn', axis=1)
-y = df_selected['Churn']
+    def scale_data(self, df, scaler_type='standard'):
+        """
+        Scales numerical features using the specified scaler.
+        scaler_type: 'standard', 'minmax', 'maxabs'
+        """
+        if scaler_type == 'standard':
+            self.scaler = StandardScaler()
+        elif scaler_type == 'minmax':
+            self.scaler = MinMaxScaler()
+        elif scaler_type == 'maxabs':
+            self.scaler = MaxAbsScaler()
+        else:
+            raise ValueError("Invalid scaler_type. Choose from 'standard', 'minmax', 'maxabs'.")
+        
+        cols_to_scale = df.columns
+        if 'Churn' in cols_to_scale:
+            cols_to_scale = df.drop('Churn', axis=1).columns
+            
+        df_scaled = df.copy()
+        df_scaled[cols_to_scale] = self.scaler.fit_transform(df[cols_to_scale])
+        
+        return df_scaled
 
-# Splitting the data into training and testing sets
-train = df_selected.copy()
-x_train = train.drop('Churn', axis=1)
-y_train = train['Churn']
+    def handle_imbalance(self, X, y):
+        """
+        Applies SMOTE to handle class imbalance.
+        """
+        sm = SMOTE(random_state=42)
+        X_resampled, y_resampled = sm.fit_resample(X, y)
+        return X_resampled, y_resampled
 
-x_test = df_selected_test.drop('Churn', axis=1)
-y_test = df_selected_test['Churn']
+    def select_features(self, X, y, k=10):
+        """
+        Selects top k features using SelectKBest with f_classif.
+        """
+        selector = SelectKBest(score_func=f_classif, k=k)
+        X_new = selector.fit_transform(X, y)
+        selected_features = X.columns[selector.get_support()]
+        return X_new, selected_features
 
-x_train_scaled = scaler.fit_transform(x_train)
-X_test_scaled  = scaler.transform(x_test)
+    def split_data(self, X, y, test_size=0.2, random_state=42):
+        """
+        Splits data into training and testing sets.
+        """
+        return train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-# Applying SMOTE to balance the classes
-sm = SMOTE(random_state=42)
+if __name__ == "__main__":
+    preprocessor = PreProcessing()
+    
+    df = preprocessor.load_data('train.csv')
+    
+    if df is not None:
+        df = preprocessor.handle_missing_values(df)
+        df = preprocessor.encode_categorical(df)
+        
+    if 'Churn' in df.columns:
+        X = df.drop('Churn', axis=1)
+        y = df['Churn']
+            
+        # X_scaled = preprocessor.scale_data(X, scaler_type='standard')
+            
+        X_res, y_res = preprocessor.handle_imbalance(X, y)
+            
+        print(f"Original shape: {X.shape}, Resampled shape: {X_res.shape}")
 
-X_train_res, y_train_res = sm.fit_resample(x_train_scaled, y_train)
-print("After SMOTE, counts of label '1': {}".format(sum(y_train_res==1)))
-print("After SMOTE, counts of label '0': {} \n".format(sum(y_train_res==0)))
+    model = LogisticRegression()
+    model.fit(X_res, y_res)
+    y_pred = model.predict(X_res)
+    print(classification_report(y_res, y_pred))
+
+    
