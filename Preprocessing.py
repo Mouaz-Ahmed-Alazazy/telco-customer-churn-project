@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
-from typing import Optional, Tuple, List
+from typing import Tuple, List, Optional
+from imblearn.over_sampling import SMOTE
+from sklearn.linear_model import LogisticRegression 
+from sklearn.svm import SVC as support_vector_machine
+from sklearn.metrics import classification_report
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler, MinMaxScaler, MaxAbsScaler
 from sklearn.feature_selection import SelectKBest, f_classif
-from imblearn.over_sampling import SMOTE
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report
 
 
 class PreProcessing:
@@ -138,6 +139,7 @@ class PreProcessing:
         return pd.DataFrame(X_resampled, columns=X.columns), pd.Series(y_resampled, name=y.name)
     
     def select_features(self, X: pd.DataFrame, y: pd.Series, k: int = 10) -> Tuple[pd.DataFrame, List[str]]:
+        
         """
         Select top k features using SelectKBest with f_classif.
         """        
@@ -169,10 +171,17 @@ def main():
     df_train = preprocessor.load_data('train.csv')
     df_test = preprocessor.load_data('test.csv')
     
+    # drop leaking features
+    drop_columns = ['customerID','Churn Score','Churn Reason','Churn Category','Satisfaction Score','Customer Status']
+    df_train = df_train.drop(columns=drop_columns, errors='ignore')
+    df_test = df_test.drop(columns=drop_columns, errors='ignore')
+
     if df_train is None or df_test is None:
         print("[ERROR] Failed to load data. Exiting.")
         return
     
+    
+
     # Handle missing values
     print("\n[2/7] Handling Missing Values...")
     df_train = preprocessor.handle_missing_values(df_train)
@@ -207,24 +216,40 @@ def main():
     X_train_resampled, y_train_resampled = preprocessor.handle_imbalance(X_train_transformed, y_train)
     print(f"[OK] Training shape after SMOTE: {X_train_resampled.shape}")
     
-    # Train and evaluate model
+    # Select top features
+    print("\n[5.5/7] Selecting Top Features...")
+    X_train_selected, selected_features = preprocessor.select_features(X_train_resampled, y_train_resampled, k=10)
+    X_test_selected = X_test_transformed[selected_features]
+
+    # Train and evaluate Logistic Regression model
     print("\n[6/7] Training Logistic Regression Model...")
     model = LogisticRegression(max_iter=1000, random_state=42)
-    model.fit(X_train_resampled, y_train_resampled)
+    model.fit(X_train_selected, y_train_resampled)
     print("[OK] Model trained successfully")
-    
-    # Evaluate on test data
+
+    # Train SVM model
+    svm_model = support_vector_machine(max_iter=1000, kernel='rbf', random_state=42)
+    svm_model.fit(X_train_selected, y_train_resampled)
+    print("[OK] SVM Model trained successfully")
+    svm_y_pred_test = svm_model.predict(X_test_selected)
+    print("\nSVM Test Set Classification Report:")
+    print("-"*60)
+    print(classification_report(y_test, svm_y_pred_test))
+
+    # Evaluate Logistic Regression on test data
     print("\n[7/7] Evaluating on Test Data...")
-    y_pred_test = model.predict(X_test_transformed)
-    
-    print("\nTest Set Classification Report:")
+    y_pred_test = model.predict(X_test_selected)
+
+    print("\nLogistic Regression Test Set Classification Report:")
     print("-"*60)
     print(classification_report(y_test, y_pred_test))
     
     print("="*60)
     print("Preprocessing Pipeline Completed Successfully!")
     print("="*60)
-
+    
+    print("columns of train data:")
+    print(X_train_selected.columns)
 
 if __name__ == "__main__":
     main()
