@@ -11,6 +11,7 @@ from sklearn.svm import SVC as support_vector_machine
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler, MinMaxScaler, MaxAbsScaler
 from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import VotingClassifier
 
 
@@ -143,170 +144,330 @@ class PreProcessing:
         
         return pd.DataFrame(X_resampled, columns=X.columns), pd.Series(y_resampled, name=y.name)
     
-    def select_features(self, X: pd.DataFrame, y: pd.Series, k: int = 10) -> Tuple[pd.DataFrame, List[str]]:
-        
+    def fit_feature_selector(self, X: pd.DataFrame, y: pd.Series, k: int = 10) -> List[str]:
         """
-        Select top k features using SelectKBest with f_classif.
-        """        
-        
+        Fit feature selector on training data and return selected feature names.
+        This should be called on training (or train+validation) data only.
+        """
         if self.feature_selector is None or self.feature_selector.k != k:
             self.feature_selector = SelectKBest(score_func=f_classif, k=k)
         
-        X_selected = self.feature_selector.fit_transform(X, y)
+        self.feature_selector.fit(X, y)
         selected_features = X.columns[self.feature_selector.get_support()].tolist()
         
         print(f"[OK] Selected {k} features: {selected_features}")
         
-        return pd.DataFrame(X_selected, columns=selected_features), selected_features
+        return selected_features
+    
+    def transform_features(self, X: pd.DataFrame, selected_features: List[str]) -> pd.DataFrame:
+        """
+        Transform data to use only selected features.
+        Can be applied to train, validation, or test data.
+        """
+        return X[selected_features]
+
+    def select_hyperparameters(self, X_train: pd.DataFrame, y_train: pd.Series, 
+                              X_val: pd.DataFrame, y_val: pd.Series) -> dict:
+        """
+        Select hyperparameters for the three models using explicit train/validation split.
+        Train on X_train/y_train, validate on X_val/y_val.
+        No cross-validation since we have an explicit validation set.
+        """
+        results = {}
+
+        # Logistic Regression
+        lr_param_grid = {
+            'C': [0.01, 0.1, 1, 10, 100],
+            'penalty': ['l2'],
+            'solver': ['lbfgs', 'liblinear']
+        }
+        print("\n[Hyperparameters] Tuning Logistic Regression...")
+        best_lr_score = 0
+        best_lr_params = {}
+        
+        for C in lr_param_grid['C']:
+            for penalty in lr_param_grid['penalty']:
+                for solver in lr_param_grid['solver']:
+                    model = LogisticRegression(C=C, penalty=penalty, solver=solver, max_iter=2000, random_state=42)
+                    model.fit(X_train, y_train)
+                    val_score = model.score(X_val, y_val)
+                    if val_score > best_lr_score:
+                        best_lr_score = val_score
+                        best_lr_params = {'C': C, 'penalty': penalty, 'solver': solver}
+        
+        results['LogisticRegression'] = {'best_params': best_lr_params, 'best_score': best_lr_score}
+        print(f"Best Params for LR: {best_lr_params} | Validation Score: {best_lr_score:.4f}")
+
+        # Decision Tree
+        dt_param_grid = {
+            'max_depth': [None, 5, 10, 15, 20],
+            'min_samples_split': [2, 5, 10],
+            'min_samples_leaf': [1, 2, 4],
+            'criterion': ['gini', 'entropy']
+        }
+        print("\n[Hyperparameters] Tuning Decision Tree...")
+        best_dt_score = 0
+        best_dt_params = {}
+        
+        for max_depth in dt_param_grid['max_depth']:
+            for min_split in dt_param_grid['min_samples_split']:
+                for min_leaf in dt_param_grid['min_samples_leaf']:
+                    for criterion in dt_param_grid['criterion']:
+                        model = DecisionTreeClassifier(max_depth=max_depth, min_samples_split=min_split,
+                                                       min_samples_leaf=min_leaf, criterion=criterion, random_state=42)
+                        model.fit(X_train, y_train)
+                        val_score = model.score(X_val, y_val)
+                        if val_score > best_dt_score:
+                            best_dt_score = val_score
+                            best_dt_params = {'max_depth': max_depth, 'min_samples_split': min_split,
+                                            'min_samples_leaf': min_leaf, 'criterion': criterion}
+        
+        results['DecisionTree'] = {'best_params': best_dt_params, 'best_score': best_dt_score}
+        print(f"Best Params for DT: {best_dt_params} | Validation Score: {best_dt_score:.4f}")
+
+        # SVM - Reduced grid for computational efficiency
+        svm_param_grid = {
+            'C': [0.1, 1, 10],  # Reduced from [0.1, 1, 10, 100]
+            'gamma': ['scale'],  # Reduced from ['scale', 'auto']
+            'kernel': ['rbf']    # Reduced from ['rbf', 'linear'] - RBF usually performs better
+        }
+        print("\n[Hyperparameters] Tuning SVM...")
+        print(f"[INFO] Testing {len(svm_param_grid['C']) * len(svm_param_grid['gamma']) * len(svm_param_grid['kernel'])} parameter combinations...")
+        best_svm_score = 0
+        best_svm_params = {}
+        
+        combination_num = 0
+        total_combinations = len(svm_param_grid['C']) * len(svm_param_grid['gamma']) * len(svm_param_grid['kernel'])
+        
+        for C in svm_param_grid['C']:
+            for gamma in svm_param_grid['gamma']:
+                for kernel in svm_param_grid['kernel']:
+                    combination_num += 1
+                    print(f"  Testing combination {combination_num}/{total_combinations}: C={C}, gamma={gamma}, kernel={kernel}...", end=" ")
+                    model = support_vector_machine(C=C, gamma=gamma, kernel=kernel, 
+                                                   probability=True, max_iter=1000, random_state=42)
+                    model.fit(X_train, y_train)
+                    val_score = model.score(X_val, y_val)
+                    print(f"Score: {val_score:.4f}")
+                    if val_score > best_svm_score:
+                        best_svm_score = val_score
+                        best_svm_params = {'C': C, 'gamma': gamma, 'kernel': kernel}
+        
+        results['SVM'] = {'best_params': best_svm_params, 'best_score': best_svm_score}
+        print(f"Best Params for SVM: {best_svm_params} | Validation Score: {best_svm_score:.4f}")
+
+        return results
+        
 
 
 def main():
-    """
-    Main function demonstrating the preprocessing pipeline.
-    """
+
     print("="*60)
-    print("Telco Customer Churn - Data Preprocessing Pipeline")
+    print("Telco Customer Churn")
     print("="*60)
     
     # Initialize preprocessor
     preprocessor = PreProcessing(scaler_type='standard')
     
-    # Load training and test data
-    print("\n[1/7] Loading Data...")
+    # ========================================
+    # STEP 1: Load ALL three datasets
+    # ========================================
+    print("\n[STEP 1/9] Loading Data...")
     df_train = preprocessor.load_data('train.csv')
+    df_validation = preprocessor.load_data('validation.csv')
     df_test = preprocessor.load_data('test.csv')
     
-    # store churn into separate variable before dropping columns
-    churned_customers = df_train[df_train['Churn'] == 1]
-    non_churned_customers = df_train[df_train['Churn'] == 0] 
-    
-    # make copy of dataframes to avoid crashes
-    df_analysis = df_train.copy()
-
-    # grouping tenure in months into bins for analysis
-    bins = [1, 3, 6, 12, 24]
-    labels = ['1-3', '4-6', '7-12', '13-24','24-36']
-    df_analysis['tenure_group'] = pd.cut(df_analysis['Tenure in Months'], bins=bins + [np.inf], labels=labels, include_lowest=True)
-    print("\nTenure Group Distribution:")
-    print(df_analysis['tenure_group'].value_counts().sort_index())
-
-    # Print class distribution
-    churned_customers['Tenure in Months'].mean()
-    non_churned_customers['Tenure in Months'].mean()
-    print(f"Churned Customers Mean Tenure: {churned_customers['Tenure in Months'].mean()}")
-    print(f"Non-Churned Customers Mean Tenure: {non_churned_customers['Tenure in Months'].mean()}")
-
-    # drop leaking features
-    drop_columns = ['customerID','Churn Score','Churn Reason','Churn Category','Satisfaction Score','Customer Status']
-    df_train = df_train.drop(columns=drop_columns, errors='ignore')
-    df_test = df_test.drop(columns=drop_columns, errors='ignore')
-
-    if df_train is None or df_test is None:
-        print("[ERROR] Failed to load data. Exiting.")
+    if df_train is None or df_validation is None or df_test is None:
+        print("[ERROR] Failed to load one or more datasets. Exiting.")
         return
     
+    print(f"[OK] Loaded 3 datasets - Train: {df_train.shape}, Validation: {df_validation.shape}, Test: {df_test.shape}")
     
-    # Handle missing values
-    print("\n[2/7] Handling Missing Values...")
+    # ========================================
+    # Exploratory Analysis (on training data only)
+    # ========================================
+    print("\n[INFO] Exploratory Data Analysis (Training Data Only)...")
+    churned_customers = df_train[df_train['Churn'] == 1]
+    non_churned_customers = df_train[df_train['Churn'] == 0]
+    
+    print(f"  Churned Customers Mean Tenure: {churned_customers['Tenure in Months'].mean():.2f} months")
+    print(f"  Non-Churned Customers Mean Tenure: {non_churned_customers['Tenure in Months'].mean():.2f} months")
+    print(f"  Class Balance - Churned: {len(churned_customers)}, Non-Churned: {len(non_churned_customers)}")
+    
+    # ========================================
+    # Drop leaking features from ALL datasets
+    # ========================================
+    print("\n[STEP 2/9] Dropping Data Leakage Features...")
+    drop_columns = ['customerID', 'Churn Score', 'Churn Reason', 'Churn Category', 
+                   'Satisfaction Score', 'Customer Status']
+    df_train = df_train.drop(columns=drop_columns, errors='ignore')
+    df_validation = df_validation.drop(columns=drop_columns, errors='ignore')
+    df_test = df_test.drop(columns=drop_columns, errors='ignore')
+    print(f"[OK] Dropped {len(drop_columns)} potential leakage columns from all datasets")
+    
+    # ========================================
+    # Handle missing values in ALL datasets
+    # ========================================
+    print("\n[STEP 3/9] Handling Missing Values...")
     df_train = preprocessor.handle_missing_values(df_train)
+    df_validation = preprocessor.handle_missing_values(df_validation)
     df_test = preprocessor.handle_missing_values(df_test)
     
-    # Split features and target
-    print("\n[3/7] Splitting Features and Target...")
-    if 'Churn' not in df_train.columns:
-        print("[ERROR] Target column 'Churn' not found in training data")
+    # ========================================
+    # Split features and target for ALL datasets
+    # ========================================
+    print("\n[STEP 4/9] Splitting Features and Target...")
+    if 'Churn' not in df_train.columns or 'Churn' not in df_validation.columns or 'Churn' not in df_test.columns:
+        print("[ERROR] Target column 'Churn' not found in one or more datasets")
         return
     
     X_train = df_train.drop('Churn', axis=1)
     y_train = df_train['Churn']
     
-    if 'Churn' not in df_test.columns:
-        print("[ERROR] Target column 'Churn' not found in test data")
-        return
+    X_validation = df_validation.drop('Churn', axis=1)
+    y_validation = df_validation['Churn']
     
     X_test = df_test.drop('Churn', axis=1)
     y_test = df_test['Churn']
     
-    print(f"[OK] Train shape: {X_train.shape}, Test shape: {X_test.shape}")
+    print(f"[OK] Split completed - Train: {X_train.shape}, Validation: {X_validation.shape}, Test: {X_test.shape}")
     
-    # Fit preprocessor on training data and transform both sets
-    print("\n[4/7] Encoding and Scaling...")
+    # ========================================
+    # Fit preprocessor ONLY on training data
+    # ========================================
+    print("\n[STEP 5/9] Fitting Preprocessing (TRAINING DATA ONLY)...")
     preprocessor.fit(X_train, target_col=None)
+    print("[OK] Preprocessor fitted on training data only (no validation/test contamination)")
+    
+    # Transform all three datasets using the fitted preprocessor
     X_train_transformed = preprocessor.transform(X_train, target_col=None)
+    X_validation_transformed = preprocessor.transform(X_validation, target_col=None)
     X_test_transformed = preprocessor.transform(X_test, target_col=None)
+    print("[OK] All datasets transformed using training-fitted preprocessor")
     
+    # ========================================
     # Handle class imbalance (ONLY on training data)
-    print("\n[5/7] Handling Class Imbalance (Training Data Only)...")
+    # ========================================
+    print("\n[STEP 6/9] Handling Class Imbalance (TRAINING DATA ONLY)...")
     X_train_resampled, y_train_resampled = preprocessor.handle_imbalance(X_train_transformed, y_train)
-    print(f"[OK] Training shape after SMOTE: {X_train_resampled.shape}")
+    print(f"[OK] SMOTE applied to training data only - New shape: {X_train_resampled.shape}")
+    print("[INFO] Validation and test data remain unchanged (class imbalance NOT applied)")
     
-    # Select top features
-    print("\n[5.5/7] Selecting Top Features...")
-    X_train_selected, selected_features = preprocessor.select_features(X_train_resampled, y_train_resampled, k=7)
-    X_test_selected = X_test_transformed[selected_features]
-
-    print("="*60)
-    print("Preprocessing Pipeline Completed Successfully!")
-    print("="*60)
-
-    # Train and evaluate Logistic Regression model
-    print("\n[6/7] Training Logistic Regression Model...")
-    model = LogisticRegression(max_iter=2000, random_state=42)
-    model.fit(X_train_selected, y_train_resampled)
-    print("[OK] Model trained successfully")
-    print("\n[7/7] Evaluating on Test Data...")
-    y_pred_test = model.predict(X_test_selected)
-    print("\nLogistic Regression Test Set Classification Report:")
-    print("-"*60)
-    print(classification_report(y_test, y_pred_test))
-
-    # Train and evaluate Decision classifier Tree model
-    DT_model = DecisionTreeClassifier(max_depth=8, random_state=42)
-    DT_model.fit(X_train_selected, y_train_resampled)
-    print("[OK] Decision Tree Model trained successfully")
-    DT_y_pred_test = DT_model.predict(X_test_selected)
-    print("\nDecision Tree Test Set Classification Report:")
-    print("-"*60)
-    print(classification_report(y_test, DT_y_pred_test))
+    # ========================================
+    # Feature selection: Fit on TRAIN, apply to all
+    # ========================================
+    print("\n[STEP 7/9] Feature Selection...")
+    print("[INFO] Fitting feature selector on training data only...")
+    selected_features = preprocessor.fit_feature_selector(X_train_resampled, y_train_resampled, k=7)
     
-    # Train SVM model
-    svm_model = support_vector_machine(max_iter=2000, kernel='rbf', probability=True, random_state=42)
-    svm_model.fit(X_train_selected, y_train_resampled)
-    print("[OK] SVM Model trained successfully")
-    svm_y_pred_test = svm_model.predict(X_test_selected)
-    print("\nSVM Test Set Classification Report:")
-    print("-"*60)
-    print(classification_report(y_test, svm_y_pred_test))
-
-    # Ensemble Voting Classifier (Soft Voting)
-    voting_clf = VotingClassifier(
-        estimators=[
-            ('lr', model),
-            ('dt', DT_model),
-            ('svm', svm_model)
-        ],
+    # Apply selected features to all datasets
+    X_train_selected = preprocessor.transform_features(X_train_resampled, selected_features)
+    X_validation_selected = preprocessor.transform_features(X_validation_transformed, selected_features)
+    X_test_selected = preprocessor.transform_features(X_test_transformed, selected_features)
+    print(f"[OK] Feature selection applied to all datasets - Selected {len(selected_features)} features")
+    
+    # ========================================
+    # Hyperparameter tuning using train and validation
+    # ========================================
+    print("\n[STEP 8/9] Hyperparameter Tuning (Train on TRAIN, Validate on VALIDATION)...")
+    print("[INFO] This may take a few minutes...")
+    best_params = preprocessor.select_hyperparameters(X_train_selected, y_train_resampled,
+                                                      X_validation_selected, y_validation)
+    
+    print("\n" + "="*80)
+    print("Hyperparameter Tuning Completed - Best Parameters:")
+    print("="*80)
+    for model_name, result in best_params.items():
+        print(f"\n{model_name}:")
+        print(f"  Parameters: {result['best_params']}")
+        print(f"  Validation Score: {result['best_score']:.4f}")
+    
+    # ========================================
+    # Final Training: Combine train+validation
+    # ========================================
+    print("\n" + "="*80)
+    print("[STEP 9/9] Final Model Training (TRAIN + VALIDATION combined)")
+    print("="*80)
+    
+    # Combine training and validation for final training
+    X_final_train = pd.concat([X_train_selected, X_validation_selected], axis=0)
+    y_final_train = pd.concat([y_train_resampled, y_validation], axis=0)
+    print(f"[OK] Combined train+validation for final training - Shape: {X_final_train.shape}")
+    
+    # Train final models with best hyperparameters
+    print("\n[INFO] Training final models with best hyperparameters...")
+    
+    # Logistic Regression
+    lr_params = best_params['LogisticRegression']['best_params']
+    final_lr_model = LogisticRegression(**lr_params, max_iter=2000, random_state=42)
+    final_lr_model.fit(X_final_train, y_final_train)
+    print("[OK] Logistic Regression trained with best params")
+    
+    # Decision Tree
+    dt_params = best_params['DecisionTree']['best_params']
+    final_dt_model = DecisionTreeClassifier(**dt_params, random_state=42)
+    final_dt_model.fit(X_final_train, y_final_train)
+    print("[OK] Decision Tree trained with best params")
+    
+    # SVM
+    svm_params = best_params['SVM']['best_params']
+    final_svm_model = support_vector_machine(**svm_params, probability=True, random_state=42)
+    final_svm_model.fit(X_final_train, y_final_train)
+    print("[OK] SVM trained with best params")
+    
+    # ========================================
+    # FINAL EVALUATION: Test set (ONLY ONCE!)
+    # ========================================
+    print("\n" + "="*80)
+    print("FINAL EVALUATION ON TEST SET (Used Only Once)")
+    print("="*80)
+    
+    print("\n" + "-"*80)
+    print("Logistic Regression - Test Set Performance:")
+    print("-"*80)
+    y_pred_lr = final_lr_model.predict(X_test_selected)
+    print(classification_report(y_test, y_pred_lr))
+    
+    print("\n" + "-"*80)
+    print("Decision Tree - Test Set Performance:")
+    print("-"*80)
+    y_pred_dt = final_dt_model.predict(X_test_selected)
+    print(classification_report(y_test, y_pred_dt))
+    
+    print("\n" + "-"*80)
+    print("SVM - Test Set Performance:")
+    print("-"*80)
+    y_pred_svm = final_svm_model.predict(X_test_selected)
+    print(classification_report(y_test, y_pred_svm))
+    
+    # Ensemble - Soft Voting
+    print("\n" + "-"*80)
+    print("Soft Voting Ensemble - Test Set Performance:")
+    print("-"*80)
+    voting_soft = VotingClassifier(
+        estimators=[('lr', final_lr_model), ('dt', final_dt_model), ('svm', final_svm_model)],
         voting='soft'
     )
-    voting_clf.fit(X_train_selected, y_train_resampled)
-    print("[OK] Soft Voting Classifier trained successfully")
-    print("Soft Voting Classifier Test Set Classification Report:")
-    print("-"*60)
-    print(classification_report(y_test, voting_clf.predict(X_test_selected)))
-
-    # Ensemble Voting Classifier (Hard Voting)
-    voting_clf_hard = VotingClassifier(
-        estimators=[
-            ('lr', model),
-            ('dt', DT_model),
-            ('svm', svm_model)
-        ],
+    voting_soft.fit(X_final_train, y_final_train)
+    y_pred_soft = voting_soft.predict(X_test_selected)
+    print(classification_report(y_test, y_pred_soft))
+    
+    # Ensemble - Hard Voting
+    print("\n" + "-"*80)
+    print("Hard Voting Ensemble - Test Set Performance:")
+    print("-"*80)
+    voting_hard = VotingClassifier(
+        estimators=[('lr', final_lr_model), ('dt', final_dt_model), ('svm', final_svm_model)],
         voting='hard'
     )
-    voting_clf_hard.fit(X_train_selected, y_train_resampled)
-    print("[OK] Hard Voting Classifier trained successfully")
-    print("Hard Voting Classifier Test Set Classification Report:")
-    print("-"*60)
-    print(classification_report(y_test, voting_clf_hard.predict(X_test_selected)))
+    voting_hard.fit(X_final_train, y_final_train)
+    y_pred_hard = voting_hard.predict(X_test_selected)
+    print(classification_report(y_test, y_pred_hard))
+    
+    print("\n" + "="*80)
+    print("Pipeline Completed Successfully")
+    print("="*80)
+
 
 if __name__ == "__main__":
     main()
