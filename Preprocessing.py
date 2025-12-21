@@ -1,12 +1,17 @@
+#top highest corelation features with target variable 'Churn'
+import seaborn as sns
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from typing import Tuple, List, Optional
 from imblearn.over_sampling import SMOTE
 from sklearn.linear_model import LogisticRegression 
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC as support_vector_machine
 from sklearn.metrics import classification_report
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler, MinMaxScaler, MaxAbsScaler
 from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.ensemble import VotingClassifier
 
 
 class PreProcessing:
@@ -171,6 +176,26 @@ def main():
     df_train = preprocessor.load_data('train.csv')
     df_test = preprocessor.load_data('test.csv')
     
+    # store churn into separate variable before dropping columns
+    churned_customers = df_train[df_train['Churn'] == 1]
+    non_churned_customers = df_train[df_train['Churn'] == 0] 
+    
+    # make copy of dataframes to avoid crashes
+    df_analysis = df_train.copy()
+
+    # grouping tenure in months into bins for analysis
+    bins = [1, 3, 6, 12, 24]
+    labels = ['1-3', '4-6', '7-12', '13-24','24-36']
+    df_analysis['tenure_group'] = pd.cut(df_analysis['Tenure in Months'], bins=bins + [np.inf], labels=labels, include_lowest=True)
+    print("\nTenure Group Distribution:")
+    print(df_analysis['tenure_group'].value_counts().sort_index())
+
+    # Print class distribution
+    churned_customers['Tenure in Months'].mean()
+    non_churned_customers['Tenure in Months'].mean()
+    print(f"Churned Customers Mean Tenure: {churned_customers['Tenure in Months'].mean()}")
+    print(f"Non-Churned Customers Mean Tenure: {non_churned_customers['Tenure in Months'].mean()}")
+
     # drop leaking features
     drop_columns = ['customerID','Churn Score','Churn Reason','Churn Category','Satisfaction Score','Customer Status']
     df_train = df_train.drop(columns=drop_columns, errors='ignore')
@@ -181,7 +206,6 @@ def main():
         return
     
     
-
     # Handle missing values
     print("\n[2/7] Handling Missing Values...")
     df_train = preprocessor.handle_missing_values(df_train)
@@ -218,17 +242,35 @@ def main():
     
     # Select top features
     print("\n[5.5/7] Selecting Top Features...")
-    X_train_selected, selected_features = preprocessor.select_features(X_train_resampled, y_train_resampled, k=10)
+    X_train_selected, selected_features = preprocessor.select_features(X_train_resampled, y_train_resampled, k=7)
     X_test_selected = X_test_transformed[selected_features]
+
+    print("="*60)
+    print("Preprocessing Pipeline Completed Successfully!")
+    print("="*60)
 
     # Train and evaluate Logistic Regression model
     print("\n[6/7] Training Logistic Regression Model...")
-    model = LogisticRegression(max_iter=1000, random_state=42)
+    model = LogisticRegression(max_iter=2000, random_state=42)
     model.fit(X_train_selected, y_train_resampled)
     print("[OK] Model trained successfully")
+    print("\n[7/7] Evaluating on Test Data...")
+    y_pred_test = model.predict(X_test_selected)
+    print("\nLogistic Regression Test Set Classification Report:")
+    print("-"*60)
+    print(classification_report(y_test, y_pred_test))
 
+    # Train and evaluate Decision classifier Tree model
+    DT_model = DecisionTreeClassifier(max_depth=8, random_state=42)
+    DT_model.fit(X_train_selected, y_train_resampled)
+    print("[OK] Decision Tree Model trained successfully")
+    DT_y_pred_test = DT_model.predict(X_test_selected)
+    print("\nDecision Tree Test Set Classification Report:")
+    print("-"*60)
+    print(classification_report(y_test, DT_y_pred_test))
+    
     # Train SVM model
-    svm_model = support_vector_machine(max_iter=1000, kernel='rbf', random_state=42)
+    svm_model = support_vector_machine(max_iter=2000, kernel='rbf', probability=True, random_state=42)
     svm_model.fit(X_train_selected, y_train_resampled)
     print("[OK] SVM Model trained successfully")
     svm_y_pred_test = svm_model.predict(X_test_selected)
@@ -236,20 +278,35 @@ def main():
     print("-"*60)
     print(classification_report(y_test, svm_y_pred_test))
 
-    # Evaluate Logistic Regression on test data
-    print("\n[7/7] Evaluating on Test Data...")
-    y_pred_test = model.predict(X_test_selected)
-
-    print("\nLogistic Regression Test Set Classification Report:")
+    # Ensemble Voting Classifier (Soft Voting)
+    voting_clf = VotingClassifier(
+        estimators=[
+            ('lr', model),
+            ('dt', DT_model),
+            ('svm', svm_model)
+        ],
+        voting='soft'
+    )
+    voting_clf.fit(X_train_selected, y_train_resampled)
+    print("[OK] Soft Voting Classifier trained successfully")
+    print("Soft Voting Classifier Test Set Classification Report:")
     print("-"*60)
-    print(classification_report(y_test, y_pred_test))
-    
-    print("="*60)
-    print("Preprocessing Pipeline Completed Successfully!")
-    print("="*60)
-    
-    print("columns of train data:")
-    print(X_train_selected.columns)
+    print(classification_report(y_test, voting_clf.predict(X_test_selected)))
+
+    # Ensemble Voting Classifier (Hard Voting)
+    voting_clf_hard = VotingClassifier(
+        estimators=[
+            ('lr', model),
+            ('dt', DT_model),
+            ('svm', svm_model)
+        ],
+        voting='hard'
+    )
+    voting_clf_hard.fit(X_train_selected, y_train_resampled)
+    print("[OK] Hard Voting Classifier trained successfully")
+    print("Hard Voting Classifier Test Set Classification Report:")
+    print("-"*60)
+    print(classification_report(y_test, voting_clf_hard.predict(X_test_selected)))
 
 if __name__ == "__main__":
     main()
